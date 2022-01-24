@@ -1,5 +1,5 @@
-from crypt import methods
 import sys
+from black import traceback
 from flask import Flask, jsonify, redirect, render_template, request, url_for, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -58,9 +58,11 @@ def set_completed_todo(todo_id):
 @app.route('/todos/<todo_id>/delete', methods=['DELETE'])
 def delete_todo(todo_id):
     try:
-        Todo.query.get(todo_id).delete()
+        Todo.query.filter_by(id=todo_id).delete()
         db.session.commit()
-    except:
+    except Exception as e:
+        print('Error', e)
+        traceback.print_exc()
         db.session.rollback()
     finally:
         db.session.close()
